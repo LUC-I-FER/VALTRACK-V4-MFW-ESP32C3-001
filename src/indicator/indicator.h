@@ -1,6 +1,23 @@
-#pragma once
-#include <Arduino.h>
+#ifndef INDICATOR_H
+#define INDICATOR_H
 
-void indicator_init();
-void indicator_set_color(uint8_t r, uint8_t g, uint8_t b, int led_num);
-void indicator_blink(uint8_t r, uint8_t g, uint8_t b, int times);
+#include <Adafruit_NeoPixel.h>
+
+extern Adafruit_NeoPixel pixels;
+
+// LED indices
+#define BATTERY_LED  0
+#define NETWORK_LED  1
+#define LOCATION_LED 2
+
+// Colors
+#define RED   0
+#define GREEN 1
+#define BLUE  2
+
+#define BRIGHTNESS 64
+
+void initLED();
+void updateLED(int ledIndex, int color, int brightness = BRIGHTNESS);
+
+#endif

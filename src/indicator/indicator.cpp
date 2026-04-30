@@ -1,19 +1,23 @@
 #include "indicator.h"
-#include <Adafruit_NeoPixel.h>
+#include <Arduino.h>
 
-#define LED_PIN 8
-#define NUMPIXELS 3
+#define GPIO_LED_SIGNAL 8
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, LED_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels(3, GPIO_LED_SIGNAL, NEO_GRB + NEO_KHZ800);
 
-void indicator_init() {
-    pixels.begin();
-    pixels.setBrightness(50);
-    pixels.clear();
-    pixels.show();
+void initLED() {
+  pixels.begin();
+  updateLED(BATTERY_LED, RED);
+  updateLED(NETWORK_LED, GREEN);
+  updateLED(LOCATION_LED, BLUE);
 }
 
-void indicator_set_color(uint8_t r, uint8_t g, uint8_t b, int led_num) {
-    pixels.setPixelColor(led_num, pixels.Color(r, g, b)); 
-    pixels.show();
+void updateLED(int ledIndex, int color, int brightness) {
+  switch(color) {
+    case RED:   pixels.setPixelColor(ledIndex, pixels.Color(brightness, 0, 0)); break;
+    case GREEN: pixels.setPixelColor(ledIndex, pixels.Color(0, brightness, 0)); break;
+    case BLUE:  pixels.setPixelColor(ledIndex, pixels.Color(0, 0, brightness)); break;
+    default:    pixels.setPixelColor(ledIndex, pixels.Color(0, 0, 0)); break;
+  }
+  pixels.show();
 }
