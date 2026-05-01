@@ -81,10 +81,10 @@ typedef struct {
 /************* USER  DEFINITION *************/
 /*********************************************/
 // Define constants for data transmission intervals in milliseconds
-#define LIVE_INTERVAL 5000    // 5 seconds for "live" mode
+#define LIVE_INTERVAL   5000    // 5 seconds for "live" mode
 #define NORMAL_INTERVAL 30000  //30000  // 30 seconds for "normal" mode
-#define SAFE_INTERVAL 60000   // 60 seconds (1 minute) for "safe" mode
-#define SLEEP_DELAY 5000
+#define SAFE_INTERVAL   60000   // 60 seconds (1 minute) for "safe" mode
+#define SLEEP_DELAY     5000
 
 // Changed stepCount from uint to unsigned long for better portability and clarity.
 // The volatile keyword is crucial here because the variable is modified by an interrupt.

@@ -10,10 +10,14 @@ extern Adafruit_NeoPixel pixels;
 #define NETWORK_LED  1
 #define LOCATION_LED 2
 
+
 // Colors
-#define RED   0
-#define GREEN 1
-#define BLUE  2
+#define RED    0
+#define GREEN  1
+#define BLUE   2
+#define PURPLE 3
+#define YELLOW 4
+#define WHITE  5
 
 #define BRIGHTNESS 64
 
