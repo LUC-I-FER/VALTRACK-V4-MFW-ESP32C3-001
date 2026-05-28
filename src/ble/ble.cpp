@@ -5,16 +5,23 @@ namespace {
     BLECharacteristic* pCharacteristic = nullptr;
     bool deviceConnected = false;
     CommandCallback globalCallback = nullptr;
+    ConnectionCallback globalConnectionCallback = nullptr;  // Add this
 
     class MyServerCallbacks : public BLEServerCallbacks {
         void onConnect(BLEServer* pServer) override {
             deviceConnected = true;
             Serial.println("[BLE] Device connected.");
+            if (globalConnectionCallback) {
+                globalConnectionCallback(true);
+            }
         }
         void onDisconnect(BLEServer* pServer) override {
             deviceConnected = false;
             Serial.println("[BLE] Device disconnected. Restart advertising.");
             pServer->startAdvertising();
+            if (globalConnectionCallback) {
+                globalConnectionCallback(false);
+            }
         }
     };
 
@@ -36,11 +43,10 @@ BLE& BLE::getInstance() {
 
 void BLE::init(const char* deviceName, bool startAdv) {
     BLEDevice::init(deviceName);
-    BLEmac = String(BLEDevice::getAddress().toString().c_str());
+
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
 
-    // FIX: use a different variable name; do not shadow the global pServer
     BLEService* pService = pServer->createService(SERVICE_UUID);
 
     pCharacteristic = pService->createCharacteristic(
@@ -48,24 +54,22 @@ void BLE::init(const char* deviceName, bool startAdv) {
         BLECharacteristic::PROPERTY_NOTIFY |
         BLECharacteristic::PROPERTY_WRITE
     );
-    pCharacteristic->addDescriptor(new BLE2902());      // FIX: addDescriptor (was addDiscriptor)
+    pCharacteristic->addDescriptor(new BLE2902());
     pCharacteristic->setCallbacks(new MyCharCallbacks());
 
     pService->start();
 
     if (startAdv){
-        // BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
-        // pAdvertising->addServiceUUID(SERVICE_UUID);
-        // pAdvertising->setScanResponse(true);
-        // pAdvertising->setMinPreferred(0x06);
-        // pAdvertising->setMaxPreferred(0x12);
-        // BLEDevice::startAdvertising();
-        startAdvertising();
+        BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+        pAdvertising->addServiceUUID(SERVICE_UUID);
+        pAdvertising->setScanResponse(true);
+        pAdvertising->setMinPreferred(0x06);
+        pAdvertising->setMaxPreferred(0x12);
+        BLEDevice::startAdvertising();
         Serial.println("[BLE] Initialised and advertising....");
     } else {
-        Serial.println("[BLE] Initialised but advertising...");
+        Serial.println("[BLE] Initialised but not advertising...");
     }
-
 }
 
 void BLE::notify(const String& data) {
@@ -74,19 +78,23 @@ void BLE::notify(const String& data) {
         return;
     }
     pCharacteristic->setValue(data.c_str());
-    pCharacteristic->notify();                         // FIX: -> not -
+    pCharacteristic->notify();
     Serial.print("[BLE] Notified: ");
     Serial.println(data);
 }
 
 bool BLE::isConnected() const {
-    if (pCharacteristic == nullptr) return false;
     return deviceConnected;
 }
 
 void BLE::setCommandCallback(CommandCallback callback) {
     globalCallback = callback;
-    userCallback = callback;   // (optional, not used elsewhere)
+    userCallback = callback;
+}
+
+void BLE::setConnectionCallback(ConnectionCallback callback) {
+    globalConnectionCallback = callback;
+    connectionCallback = callback;
 }
 
 void BLE::startAdvertising() {
@@ -97,4 +105,11 @@ void BLE::startAdvertising() {
     pAdvertising->setMaxPreferred(0x12);
     BLEDevice::startAdvertising();
     Serial.println("[BLE] Advertising started.");
+}
+
+String BLE::getMacAddress() const {
+    // Get BLE MAC address
+    String mac = BLEDevice::getAddress().toString().c_str();
+    mac.toUpperCase();
+    return mac;
 }

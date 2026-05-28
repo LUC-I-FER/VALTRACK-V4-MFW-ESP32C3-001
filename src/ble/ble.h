@@ -11,16 +11,18 @@
 #define CHARACTERISTICS_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 
 typedef void (*CommandCallback)(const String& command);
+typedef void (*ConnectionCallback)(bool connected);
 
 class BLE {
     public:
-        String BLEmac = "";
         static BLE& getInstance();
         void init(const char* deviceName = "ESP32_Paw", bool startAdv = true);
         void notify(const String& data);
         bool isConnected() const;
         void setCommandCallback(CommandCallback callback);
+        void setConnectionCallback(ConnectionCallback callback);
         void startAdvertising();
+        String getMacAddress() const;
 
     private:
         BLE(){}
@@ -30,6 +32,7 @@ class BLE {
 
         bool connected = false;
         CommandCallback userCallback = nullptr;
+        ConnectionCallback connectionCallback = nullptr;
 };
 
 #endif
