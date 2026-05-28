@@ -14,6 +14,7 @@ typedef void (*CommandCallback)(const String& command);
 
 class BLE {
     public:
+        String BLEmac = "";
         static BLE& getInstance();
         void init(const char* deviceName = "ESP32_Paw", bool startAdv = true);
         void notify(const String& data);

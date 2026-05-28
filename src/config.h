@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define APN "vi"
+#define APN "jionet"
 #define USER ""
 #define PASS ""
 
@@ -15,6 +15,11 @@
 #define MQTT_BROKER    "tcp://mqtt.flespi.io:1883"
 #define MQTT_TOKEN     "Hz8ZN1ZvlOH5yZcvgKJyaC3dOrdqILdsMQkdmFUKkqUabNcVIQprNgf7Fd1Vb3ZV"
 #define MQTT_CLIENT_ID "ESP32C3_GSM"
+
+#define LIVE_MODE   0
+#define SAFE_MODE   1
+#define NORMAL_MODE 2
+#define BLEGPS_MODE 3
 
 /*
 snprintf(payload, sizeof(payload),

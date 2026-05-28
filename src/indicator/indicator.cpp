@@ -7,7 +7,7 @@ Adafruit_NeoPixel pixels(3, GPIO_LED_SIGNAL, NEO_GRB + NEO_KHZ800);
 
 void initLED() {
   pixels.begin();
-  updateLED(BATTERY_LED,  RED, 64);
+  updateLED(BATTERY_LED,  GREEN, 64);
   updateLED(NETWORK_LED,  RED, 64);
   updateLED(LOCATION_LED, RED, 64);
 }

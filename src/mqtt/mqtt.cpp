@@ -3,8 +3,8 @@
 #include <Arduino.h>
 
 static String mqttBroker = "tcp://mqtt.flespi.io:1883";
-static String mqttToken = "Hz8ZN1ZvlOH5yZcvgKJyaC3dOrdqILdsMQkdmFUKkqUabNcVIQprNgf7Fd1Vb3ZV";
-static String mqttClientId = "ESP32C3_GSM";
+static String mqttToken = "qDggAIr4wzKxGolrbJIpZGDqoN0pfK0qrsoO5kXxF2Beb30koFYHziZ0B6Bdx4Rr";
+static String mqttClientId = "1029384756";
 
 static void mqtt_acquire(uint8_t idx, const String& client_name) {
     String cmd = "+CMQTTACCQ=" + String(idx) + ",\"" + client_name + "\",0";
@@ -31,7 +31,10 @@ void mqtt_init() {
 
     SerialMon.println("Starting MQTT service on modem...");
     modem.sendAT(GF("+CMQTTSTART"));
-    if (modem.waitResponse(10000UL, "+CMQTTSTART: 0") != 1) {
+    int x = modem.waitResponse(10000UL, "+CMQTTSTART: 0");
+    SerialMon.println("[MQTT]");
+    SerialMon.println(x);
+    if (x != 1) {
         SerialMon.println("Failed to start MQTT service");
         return;
     }
@@ -42,7 +45,6 @@ void mqtt_init() {
         SerialMon.println("MQTT connection failed");
     }
 }
-
 // Wait for '>' prompt from modem, returns true if found within timeout
 static bool waitForPrompt(unsigned long timeout_ms = 3000) {
     unsigned long start = millis();
@@ -120,6 +122,7 @@ int mqtt_publish(const String& topic, const String& payload) {
     return 0;
 }
 
+// we need to update the mqtt read function
 String mqtt_read_incoming() {
     String line;
     if (modem.stream.available()) {
@@ -143,3 +146,20 @@ String mqtt_read_incoming() {
     }
     return "";
 }
+
+// void reconnectMQTT() {
+//   while (!mqtt.connected()) {
+//     SerialMon.print("Connecting to MQTT broker...");
+//     // Use your flespi token as the username, password empty
+//     if (mqtt.connect(mqttClientId, mqttToken, "")) {
+//       SerialMon.println(" connected!");
+//       // Subscribe to a topic if you want to receive messages
+//       // mqtt.subscribe("esp32c3/commands");
+//     } else {
+//       SerialMon.print(" failed, rc=");
+//       SerialMon.println(mqtt.state());
+//       SerialMon.println(" retry in 5 seconds");
+//       delay(5000);
+//     }
+//   }
+// }

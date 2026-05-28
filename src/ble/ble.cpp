@@ -36,7 +36,7 @@ BLE& BLE::getInstance() {
 
 void BLE::init(const char* deviceName, bool startAdv) {
     BLEDevice::init(deviceName);
-
+    BLEmac = String(BLEDevice::getAddress().toString().c_str());
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
 
@@ -54,12 +54,13 @@ void BLE::init(const char* deviceName, bool startAdv) {
     pService->start();
 
     if (startAdv){
-        BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
-        pAdvertising->addServiceUUID(SERVICE_UUID);
-        pAdvertising->setScanResponse(true);
-        pAdvertising->setMinPreferred(0x06);
-        pAdvertising->setMaxPreferred(0x12);
-        BLEDevice::startAdvertising();
+        // BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+        // pAdvertising->addServiceUUID(SERVICE_UUID);
+        // pAdvertising->setScanResponse(true);
+        // pAdvertising->setMinPreferred(0x06);
+        // pAdvertising->setMaxPreferred(0x12);
+        // BLEDevice::startAdvertising();
+        startAdvertising();
         Serial.println("[BLE] Initialised and advertising....");
     } else {
         Serial.println("[BLE] Initialised but advertising...");
@@ -79,6 +80,7 @@ void BLE::notify(const String& data) {
 }
 
 bool BLE::isConnected() const {
+    if (pCharacteristic == nullptr) return false;
     return deviceConnected;
 }
 

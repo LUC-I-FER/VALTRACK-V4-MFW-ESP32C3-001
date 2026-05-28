@@ -80,8 +80,6 @@ void loop(){
     update_values();
     
     delay(1000);
-
-    updateLED(BATTERY_LED, BLUE, 0);
 }
 
 // helper functions to initialize the gsm modem
@@ -225,8 +223,6 @@ void set_mode(String modeStr){
 
 void update_values(){
     // main aim of thsis function is to update all the parameters we need to send
-
-    updateLED(BATTERY_LED, BLUE, 50);
     if (topic == ""){
         bleMac.toUpperCase();
         topic = "pets/" + bleMac + "/data";
